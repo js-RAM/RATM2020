@@ -8,15 +8,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-
-import frc.robot.Constants;
+import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
+import io.github.oblarg.oblog.Logger;
+
 
 
 /**
@@ -31,23 +32,21 @@ public class RobotContainer {
   int leftVert = 1;
   int rightHoriz = 4;
   int rightVert = 5;
-  
-  
-  
+    
   private ExampleSubsystem exampleSubsystem;
   private DriveTrain driveTrain;
   private Intake intake;
 
   private ExampleCommand exampleAutoCommand;
-  XboxController driverController;
-  
 
+  XboxController driverController;
 
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    Logger.configureLoggingAndConfig(true, true);
 
     // Initalize subsystems
     exampleSubsystem = new ExampleSubsystem();
@@ -66,22 +65,11 @@ public class RobotContainer {
     // Configure default commands
     
     // Set the default drive command to split-stick arcade drive
-    if (Constants.DRIVE_ARCADE) {
-      driveTrain.setDefaultCommand(
-          // A split-stick arcade command, with forward/backward controlled by the left
-          // hand, and turning controlled by the right.
-          new RunCommand(() -> driveTrain
-              .arcadeDrive(driverController.getY(GenericHID.Hand.kLeft),
-                  driverController.getX(GenericHID.Hand.kRight)), driveTrain));  
-    } else {
-      driveTrain.setDefaultCommand(
-          // A tank drive command, with left drive controlled by the left
-          // hand, and right drive controlled by the right.
-          new RunCommand(() -> driveTrain
-              .tankDrive(driverController.getY(GenericHID.Hand.kLeft),
-                  driverController.getX(GenericHID.Hand.kRight)), driveTrain));  
-    }
-    
+    driveTrain.setDefaultCommand(new DefaultDriveCommand(() -> driverController.getY(Hand.kLeft),
+        () -> driverController.getY(Hand.kRight),
+        () -> driverController.getX(Hand.kRight),
+        () -> driverController.getXButtonReleased(),
+        driveTrain));
     
     configureButtonBindings();
   }
@@ -96,6 +84,9 @@ public class RobotContainer {
 
   }
 
+  public void periodic() {
+    Logger.updateEntries();
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
