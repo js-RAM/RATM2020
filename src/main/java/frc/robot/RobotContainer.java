@@ -65,6 +65,7 @@ public class RobotContainer {
     // Configure default commands
     
     // Set the default drive command to split-stick arcade drive
+    // pressing the x button will toggle between tank and arcade
     driveTrain.setDefaultCommand(new DefaultDriveCommand(() -> driverController.getY(Hand.kLeft),
         () -> driverController.getY(Hand.kRight),
         () -> driverController.getX(Hand.kRight),
