@@ -18,13 +18,13 @@ public class Elevator extends SubsystemBase {
 
   //Instance Variables
   private WPI_VictorSPX motor;
+  private final double weight = 0.3;
 
   /**
    * Instantiate Elevator Subsystem.
    */
   public Elevator() {
     motor = new WPI_VictorSPX(9);
-
   }
   
 
@@ -38,7 +38,7 @@ public class Elevator extends SubsystemBase {
    * @param speed sets the speed of the motor [-1, 1]
     */
   public void motorControl(double speed) {
-    motor.set(ControlMode.PercentOutput, speed);
+    motor.set(ControlMode.PercentOutput, speed * weight);
     
   }
 
