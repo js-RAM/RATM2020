@@ -23,7 +23,6 @@ public class AutoMidDumpCommand extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     super(
-          
           new DriveTurnCommand(-40.26042879358, driveTrain),
           new DriveDistanceCommand(104.8334989399857816, driveTrain),
           new DriveTurnCommand(40.260428793580, driveTrain),
