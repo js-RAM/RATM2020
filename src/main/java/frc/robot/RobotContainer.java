@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogTrigger;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController;
@@ -23,16 +24,15 @@ import frc.robot.Constants.Shoot;
 import frc.robot.commands.AutoLeftShootCommandGroup;
 import frc.robot.commands.AutoRightDumpCommandGroup;
 import frc.robot.commands.AutoRightShootCommandGroup;
-import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.DefaultElevatorCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.PidShootCommandGroup;
 import frc.robot.commands.TestHighShootCommandGroup;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.triggers.AnalogTrigger;
 import frc.robot.triggers.TriggerButton;
 
 /**
@@ -51,7 +51,7 @@ public class RobotContainer {
   private DriveTrain driveTrain;
   private Intake intake;
   private Shooter shooter;
-  private Climber climber;
+  private Elevator elevator;
 
   private AutoLeftShootCommandGroup autoLeftShootCommandGroup;
   private AutoRightShootCommandGroup autoRightShootCommandGroup;
@@ -59,8 +59,7 @@ public class RobotContainer {
   private TestHighShootCommandGroup testHighShootCommand;
   private PidShootCommandGroup lowShootCommand;
   private PidShootCommandGroup highShootCommand;
-  private ClimbCommand climbCommand;
-
+  
   XboxController driverController;
   JoystickButton driverRightBumper;
   JoystickButton driverLeftBumper;
@@ -88,7 +87,7 @@ public class RobotContainer {
     driveTrain = new DriveTrain();
     intake = new Intake();
     shooter = new Shooter();
-    climber = new Climber();    
+    elevator = new Elevator();    
 
     // Initalize commands
     autoLeftShootCommandGroup = new AutoLeftShootCommandGroup(driveTrain, intake, shooter);
@@ -108,7 +107,6 @@ public class RobotContainer {
     driverRightTrigger = new TriggerButton(driverController.getTriggerAxis(Hand.kRight));
     
     manipulatorController = new XboxController(1);
-    analogTrigger = new AnalogTrigger(manipulatorController, Hand.kRight);
 
     // Configure the button bindings
     maniButtonA = new JoystickButton(manipulatorController, Button.kA.value);
@@ -125,7 +123,11 @@ public class RobotContainer {
         () -> driverLeftTrigger.get(),
         () -> driverRightTrigger.get(),
         driveTrain));
-    climbCommand = new ClimbCommand(analogTrigger::getDY, climber);
+
+    
+    elevator.setDefaultCommand(new DefaultElevatorCommand(
+        () -> manipulatorController.getY(Hand.kRight),
+        elevator));
 
     intake.setDefaultCommand(new DefaultIntakeCommand(
         () -> manipulatorController.getY(Hand.kLeft),
@@ -151,8 +153,7 @@ public class RobotContainer {
         .whenReleased(new InstantCommand(
             () -> shooter.shoot(0), shooter));
     maniButtonX.whenHeld(highShootCommand);         
-    analogTrigger.whileActiveOnce(climbCommand);          
-    
+
     autoChooser = new SendableChooser<Command>();
     autoChooser.setDefaultOption("Auto Left Shoot", autoLeftShootCommandGroup);
     autoChooser.addOption("Auto Middle Shoot", autoLeftShootCommandGroup);
