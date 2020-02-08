@@ -24,10 +24,10 @@ public class AutoMidDumpCommand extends SequentialCommandGroup {
     // super(new FooCommand(), new BarCommand());
     super(
           
-          new DriveTurnCommand(-37.5921834821, driveTrain),
-          new DriveDistanceCommand(111.058824503, driveTrain),
-          new DriveTurnCommand(37.5921834821, driveTrain),
-          new DriveDistanceCommand(34, driveTrain),
+          new DriveTurnCommand(-40.260428793580‬, driveTrain),
+          new DriveDistanceCommand(104.8334989399857816, driveTrain),
+          new DriveTurnCommand(40.260428793580, driveTrain),
+          new DriveDistanceCommand(42, driveTrain),
           new PidShootCommandGroup(1000, intake, shooter)
           );
   }
