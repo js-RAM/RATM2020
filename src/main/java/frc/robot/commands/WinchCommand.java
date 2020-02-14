@@ -8,25 +8,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Winch;
 
-import java.util.function.DoubleSupplier;
-
-public class DefaultElevatorCommand extends CommandBase {
+public class WinchCommand extends CommandBase {
   
-  private final Elevator subsystem;
+  private final Winch subsystem;
   
-  private DoubleSupplier powerSupplier;
-
   /**
    * Creates a new Elevatorommand.
    */
-  public DefaultElevatorCommand(DoubleSupplier powerSupplier, Elevator subsystem) {
+  public WinchCommand(Winch subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.subsystem = subsystem;
-    
-    this.powerSupplier = powerSupplier;
-
+  
     addRequirements(subsystem);
   }
 
@@ -40,10 +34,10 @@ public class DefaultElevatorCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (powerSupplier.getAsDouble() >= 0.1) {
-      subsystem.motorControl(powerSupplier.getAsDouble());
-      System.out.println("Analog Trigger Works");
-    }
+    
+    subsystem.winchControl(0.3);
+    System.out.println("Analog Trigger Works");
+    
   }
 
   // Called once the command ends or is interrupted.

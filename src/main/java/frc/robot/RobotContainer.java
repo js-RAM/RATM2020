@@ -29,10 +29,12 @@ import frc.robot.commands.DefaultElevatorCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.PidShootCommandGroup;
 import frc.robot.commands.TestHighShootCommandGroup;
+import frc.robot.commands.WinchCommand;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Winch;
 import frc.robot.triggers.TriggerButton;
 
 /**
@@ -52,6 +54,7 @@ public class RobotContainer {
   private Intake intake;
   private Shooter shooter;
   private Elevator elevator;
+  private Winch winch;
 
   private AutoLeftShootCommandGroup autoLeftShootCommandGroup;
   private AutoRightShootCommandGroup autoRightShootCommandGroup;
@@ -59,6 +62,7 @@ public class RobotContainer {
   private TestHighShootCommandGroup testHighShootCommand;
   private PidShootCommandGroup lowShootCommand;
   private PidShootCommandGroup highShootCommand;
+  private WinchCommand winchCommand;
   
   XboxController driverController;
   JoystickButton driverRightBumper;
@@ -72,6 +76,7 @@ public class RobotContainer {
   JoystickButton maniButtonY;
   JoystickButton maniButtonA;
   JoystickButton maniButtonX;
+  JoystickButton maniButtonS;
   Trigger maniLeftTrigger;
   Trigger maniRightTrigger;
   AnalogTrigger analogTrigger;
@@ -87,7 +92,8 @@ public class RobotContainer {
     driveTrain = new DriveTrain();
     intake = new Intake();
     shooter = new Shooter();
-    elevator = new Elevator();    
+    elevator = new Elevator(); 
+    winch = new Winch();   
 
     // Initalize commands
     autoLeftShootCommandGroup = new AutoLeftShootCommandGroup(driveTrain, intake, shooter);
@@ -96,6 +102,7 @@ public class RobotContainer {
     lowShootCommand = new PidShootCommandGroup(Shoot.SLOW_RPM, intake, shooter);
     highShootCommand = new PidShootCommandGroup(Shoot.FAST_RPM, intake, shooter);
     testHighShootCommand = new TestHighShootCommandGroup(intake, shooter);
+    winchCommand = new WinchCommand(winch);
     
     // Initialize Gamepads
     driverController = new XboxController(0);
@@ -112,6 +119,7 @@ public class RobotContainer {
     maniButtonA = new JoystickButton(manipulatorController, Button.kA.value);
     maniButtonX = new JoystickButton(manipulatorController, Button.kX.value);
     maniButtonY = new JoystickButton(manipulatorController, Button.kY.value);
+    maniButtonS = new JoystickButton(manipulatorController, Button.kStart.value);
     
     // Set the default drive command to split-stick arcade drive
     driveTrain.setDefaultCommand(new DefaultDriveCommand(
@@ -152,7 +160,8 @@ public class RobotContainer {
     maniButtonY.whenHeld(testHighShootCommand)  
         .whenReleased(new InstantCommand(
             () -> shooter.shoot(0), shooter));
-    maniButtonX.whenHeld(highShootCommand);         
+    maniButtonX.whenHeld(highShootCommand);   
+    maniButtonS.whenHeld(winchCommand);      
 
     autoChooser = new SendableChooser<Command>();
     autoChooser.setDefaultOption("Auto Left Shoot", autoLeftShootCommandGroup);
