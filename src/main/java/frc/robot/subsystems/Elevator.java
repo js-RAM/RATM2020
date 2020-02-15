@@ -30,8 +30,8 @@ public class Elevator extends SubsystemBase {
    */
   public Elevator() {
     motor = new WPI_VictorSPX(9);
-    encoder = new Encoder(2, 3, false, EncodingType.k4X);
-    encoder.setDistancePerPulse(Constants.Drive.DISTANCE_PER_PULSE);
+    encoder = new Encoder(4, 5, false, EncodingType.k4X);
+    encoder.setDistancePerPulse(Constants.Elevator.DISTANCE_PER_PULSE);
   }
   
 
@@ -44,11 +44,6 @@ public class Elevator extends SubsystemBase {
     return encoder.getDistance() + Constants.Elevator.HEIGHT;
   }
 
-  public void goDistance(double dist){
-    
-  }
-
-  
 
   /**
    * Controls the small winch for the climber setup.

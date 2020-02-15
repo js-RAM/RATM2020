@@ -24,7 +24,7 @@ public class ElevatorCommand extends PIDCommand {
     // Use addRequirements() here to declare subsystem dependencies.
     super(frc.robot.Constants.Elevator.PID,
         () -> (subsystem.getDistance()), 
-        height - Constants.Elevator.HEIGHT,
+        height,
         output -> {
           subsystem.motorControl(output);
         },

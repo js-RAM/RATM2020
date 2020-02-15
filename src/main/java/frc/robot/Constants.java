@@ -51,6 +51,7 @@ public final class Constants {
   public static final class Elevator {
     public static PIDController PID = new PIDController(1, 0, 0);
     public static double HEIGHT = 25;
+    public static double DISTANCE_PER_PULSE = (0.962 * Math.PI) / 2048;
 
   }
 
