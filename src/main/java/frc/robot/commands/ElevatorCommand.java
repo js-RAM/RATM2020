@@ -7,25 +7,31 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
+import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 
-import java.util.function.DoubleSupplier;
-
-public class DefaultElevatorCommand extends CommandBase {
+public class ElevatorCommand extends PIDCommand {
   
   private final Elevator subsystem;
   
-  private DoubleSupplier powerSupplier;
 
   /**
    * Creates a new Elevatorommand.
    */
-  public DefaultElevatorCommand(DoubleSupplier powerSupplier, Elevator subsystem) {
+  public ElevatorCommand(double height, Elevator subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
+    super(frc.robot.Constants.Elevator.PID,
+        () -> (subsystem.getDistance()), 
+        height - Constants.Elevator.HEIGHT,
+        output -> {
+          subsystem.motorControl(output);
+        },
+        subsystem
+    );
     this.subsystem = subsystem;
     
-    this.powerSupplier = powerSupplier;
 
     addRequirements(subsystem);
   }
@@ -40,10 +46,7 @@ public class DefaultElevatorCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (powerSupplier.getAsDouble() >= 0.1) {
-      subsystem.motorControl(powerSupplier.getAsDouble());
-      System.out.println("Analog Trigger Works");
-    }
+  
   }
 
   // Called once the command ends or is interrupted.

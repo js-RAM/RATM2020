@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+import frc.robot.subsystems.Elevator;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -19,6 +22,19 @@ public final class Constants {
   public static double HIGH_SPEED = 0.85;
   public static double MID_SPEED = 0.6;
   public static double LOW_SPEED = 0.4;
+
+  public static final class Climber {
+    public static double HEIGHT;
+    public static double SPEED;
+
+    public static double clamp(double val) {
+      return Math.max(Elevator.HEIGHT, Math.min(70, val));
+    }
+  }
+
+  public static final class ColorWheel {
+    public static double HEIGHT = 36.5;
+  }
   
   public static final class Drive {
     public static double DISTANCE_PER_PULSE = (6 * Math.PI / 2048);
@@ -30,6 +46,12 @@ public final class Constants {
     public static double DTURN = 0;
     public static double TURN_TOLERANCE = 2;
     public static double SPEED_TOLERANCE = 3;
+  }
+
+  public static final class Elevator {
+    public static PIDController PID = new PIDController(1, 0, 0);
+    public static double HEIGHT = 25;
+
   }
 
   public static final class IntakeConstant {

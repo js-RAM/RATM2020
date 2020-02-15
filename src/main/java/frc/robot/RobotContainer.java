@@ -20,13 +20,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ColorWheel;
 import frc.robot.Constants.Shoot;
 import frc.robot.commands.AutoLeftShootCommandGroup;
 import frc.robot.commands.AutoRightDumpCommandGroup;
 import frc.robot.commands.AutoRightShootCommandGroup;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.DefaultElevatorCommand;
 import frc.robot.commands.DefaultIntakeCommand;
+import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.PidShootCommandGroup;
 import frc.robot.commands.TestHighShootCommandGroup;
 import frc.robot.commands.WinchCommand;
@@ -59,6 +61,7 @@ public class RobotContainer {
   private AutoLeftShootCommandGroup autoLeftShootCommandGroup;
   private AutoRightShootCommandGroup autoRightShootCommandGroup;
   private AutoRightDumpCommandGroup autoRightDumpCommandGroup;
+  private ElevatorCommand colorWheelElevatorCommand;
   private TestHighShootCommandGroup testHighShootCommand;
   private PidShootCommandGroup lowShootCommand;
   private PidShootCommandGroup highShootCommand;
@@ -99,6 +102,7 @@ public class RobotContainer {
     autoLeftShootCommandGroup = new AutoLeftShootCommandGroup(driveTrain, intake, shooter);
     autoRightShootCommandGroup = new AutoRightShootCommandGroup(driveTrain, intake, shooter);
     autoRightDumpCommandGroup = new AutoRightDumpCommandGroup(driveTrain, intake, shooter);
+    colorWheelElevatorCommand = new ElevatorCommand(ColorWheel.HEIGHT, elevator);
     lowShootCommand = new PidShootCommandGroup(Shoot.SLOW_RPM, intake, shooter);
     highShootCommand = new PidShootCommandGroup(Shoot.FAST_RPM, intake, shooter);
     testHighShootCommand = new TestHighShootCommandGroup(intake, shooter);
@@ -133,7 +137,7 @@ public class RobotContainer {
         driveTrain));
 
     
-    elevator.setDefaultCommand(new DefaultElevatorCommand(
+    elevator.setDefaultCommand(new ClimbCommand(
         () -> manipulatorController.getY(Hand.kRight),
         elevator));
 
@@ -162,6 +166,7 @@ public class RobotContainer {
             () -> shooter.shoot(0), shooter));
     maniButtonX.whenHeld(highShootCommand);   
     maniButtonS.whenHeld(winchCommand);      
+    maniRightTrigger.whenActive(colorWheelElevatorCommand);
 
     autoChooser = new SendableChooser<Command>();
     autoChooser.setDefaultOption("Auto Left Shoot", autoLeftShootCommandGroup);
