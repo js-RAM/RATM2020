@@ -7,31 +7,27 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 
-public class ElevatorCommand extends PIDCommand {
+public class ElevatorCommand extends CommandBase {
   
   private final Elevator subsystem;
-  
+  private final DoubleSupplier ds;
 
   /**
    * Creates a new Elevatorommand.
    */
-  public ElevatorCommand(double height, Elevator subsystem) {
+  public ElevatorCommand(DoubleSupplier power, Elevator subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-    super(frc.robot.Constants.Elevator.PID,
-        () -> (subsystem.getDistance()), 
-        height,
-        output -> {
-          subsystem.motorControl(output);
-        },
-        subsystem
-    );
-    this.subsystem = subsystem;
     
+    this.subsystem = subsystem;
+    ds = power;
 
     addRequirements(subsystem);
   }
@@ -46,7 +42,7 @@ public class ElevatorCommand extends PIDCommand {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  
+    subsystem.motorControl(ds.getAsDouble() * 1.0 / 10);
   }
 
   // Called once the command ends or is interrupted.

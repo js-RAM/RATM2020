@@ -102,7 +102,7 @@ public class RobotContainer {
     autoLeftShootCommandGroup = new AutoLeftShootCommandGroup(driveTrain, intake, shooter);
     autoRightShootCommandGroup = new AutoRightShootCommandGroup(driveTrain, intake, shooter);
     autoRightDumpCommandGroup = new AutoRightDumpCommandGroup(driveTrain, intake, shooter);
-    colorWheelElevatorCommand = new ElevatorCommand(ColorWheel.HEIGHT, elevator);
+    //colorWheelElevatorCommand = new ElevatorCommand(ColorWheel.HEIGHT, elevator);
     lowShootCommand = new PidShootCommandGroup(Shoot.SLOW_RPM, intake, shooter);
     highShootCommand = new PidShootCommandGroup(Shoot.FAST_RPM, intake, shooter);
     testHighShootCommand = new TestHighShootCommandGroup(intake, shooter);
@@ -137,7 +137,7 @@ public class RobotContainer {
         driveTrain));
 
     
-    elevator.setDefaultCommand(new ClimbCommand(
+    elevator.setDefaultCommand(new ElevatorCommand(
         () -> manipulatorController.getY(Hand.kRight),
         elevator));
 
