@@ -29,13 +29,16 @@ import frc.robot.commands.AutoRightShootCommandGroup;
 import frc.robot.commands.AutoStraightCommandGroup;
 import frc.robot.commands.AutoStraightDumpCommandGroup;
 import frc.robot.commands.AutoStraightShootCommandGroup;
+import frc.robot.commands.ControlPanelBagCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.PidShootCommandGroup;
 import frc.robot.commands.SetRpmShootCommandGroup;
+import frc.robot.commands.SnowBlowerCommand;
 import frc.robot.commands.VisionCommandGroup;
 import frc.robot.commands.WinchCommand;
+import frc.robot.subsystems.ControlPanel;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
@@ -62,6 +65,7 @@ public class RobotContainer {
   private PidShooter pidShooter;
   private Elevator elevator;
   private Winch winch;
+  private ControlPanel controlPanel;
 
   private AutoStraightCommandGroup autoStraightCommandGroup;
   private AutoRightShootCommandGroup autoRightShootCommandGroup;
@@ -76,6 +80,8 @@ public class RobotContainer {
   private SetRpmShootCommandGroup lowShootCommand;
   private PidShootCommandGroup highShootCommand;
   private WinchCommand winchCommand;
+  private SnowBlowerCommand snowBlowerCommand;
+  private ControlPanelBagCommand controlPanelBagCommand;
   //private DriveDistanceCommand tDriveDistanceCommand;
   //private DriveTurnCommand tDriveTurnCommand;
 
@@ -97,6 +103,8 @@ public class RobotContainer {
   JoystickButton maniLeftBumper;
   JoystickButton maniRightBumper;
   POVButton maniPovUp;
+  POVButton maniPovDown;
+  POVButton maniPovRight;
   Trigger maniLeftTrigger;
   Trigger maniRightTrigger;
   AnalogTrigger analogTrigger;
@@ -118,17 +126,7 @@ public class RobotContainer {
     pidShooter = new PidShooter();
     elevator = new Elevator(); 
     winch = new Winch();
-    
-    /*parameterTab = Shuffleboard.getTab("Parameter Tab");
-    highSpeed = parameterTab.add("High Speed", 0.9)
-      .getEntry();
-    midSpeed = parameterTab.add("Mid Speed", 0.825)
-      .getEntry();
-    lowerMidSpeed = parameterTab.add("Lower Mid Speed", 0.75)
-      .getEntry();
-    lowSpeed = parameterTab.add("Low Speed", 0.4)
-      .getEntry();
-    */
+    controlPanel = new ControlPanel();
 
     // Initalize commands
     autoStraightCommandGroup = new AutoStraightCommandGroup(driveTrain);
@@ -152,6 +150,8 @@ public class RobotContainer {
                                                         pidShooter);
     highShootCommand = new PidShootCommandGroup(driveTrain, intake, pidShooter);
     winchCommand = new WinchCommand(winch);
+    snowBlowerCommand = new SnowBlowerCommand(0.5, controlPanel);
+    controlPanelBagCommand = new ControlPanelBagCommand(0.5, controlPanel);
     //tDriveDistanceCommand = new DriveDistanceCommand(50, true, driveTrain);
     //tDriveTurnCommand = new DriveTurnCommand(-90, driveTrain);
     
@@ -179,6 +179,8 @@ public class RobotContainer {
     maniLeftBumper = new JoystickButton(manipulatorController, Button.kBumperLeft.value);
     maniRightBumper = new JoystickButton(manipulatorController, Button.kBumperRight.value);
     maniPovUp = new POVButton(manipulatorController, 0);
+    maniPovDown = new POVButton(manipulatorController, 180);
+    maniPovRight = new POVButton(manipulatorController, 90);
     
     // Set the default drive command to split-stick arcade drive
     driveTrain.setDefaultCommand(new DefaultDriveCommand(
@@ -227,8 +229,11 @@ public class RobotContainer {
             () -> winch.winchControl(0)
         ));
     maniLeftBumper.whenHeld(visionCommandGroup);
-    maniRightBumper.whenHeld(winchCommand);                  
+    maniRightBumper.whenHeld(winchCommand);     
+    maniPovDown.whenPressed(snowBlowerCommand);
+    maniPovRight.whenPressed(controlPanelBagCommand);             
     
+    //The Autonomous chooser
     autoChooser = new SendableChooser<Command>();
     autoChooser.setDefaultOption("Auto Right Shoot", autoRightShootCommandGroup);
     autoChooser.addOption("Auto Straight", autoStraightCommandGroup);
