@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.Shoot;
 import frc.robot.modules.TrajectoryMath;
 import frc.robot.subsystems.DriveTrain;
 
@@ -55,7 +56,8 @@ public class VisionAlignCommand extends CommandBase {
     driveTrain.arcadeDrive(0, rotationAjust);
     SmartDashboard.putNumber("Distance Adjuist", distanceAjust);
     SmartDashboard.putNumber("Rotation Adjust", rotationAjust);
-    SmartDashboard.putNumber("Distance From", TrajectoryMath.getDistanceFromPitch(distanceError));
+    SmartDashboard.putNumber("Distance From", 
+        TrajectoryMath.getDistanceFromPitch(distanceError, Shoot.GOAL_HEIGHT));
   }
 
   // Called once the command ends or is interrupted.

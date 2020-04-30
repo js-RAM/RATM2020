@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.Auto11BallCommandGroup;
+import frc.robot.commands.AutoCustomCommand;
 import frc.robot.commands.AutoLeftDumpCommandGroup;
 import frc.robot.commands.AutoLeftShootCommandGroup;
 import frc.robot.commands.AutoMidDumpCommand;
@@ -29,21 +31,28 @@ import frc.robot.commands.AutoStraightCommandGroup;
 import frc.robot.commands.AutoStraightDumpCommandGroup;
 import frc.robot.commands.AutoStraightShootCommandGroup;
 import frc.robot.commands.BallAlignmentCommand;
+import frc.robot.commands.CustomDriveDistanceCommand;
+import frc.robot.commands.CustomDriveTurnCommand;
+import frc.robot.commands.CustomShootCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.PidShootCommandGroup;
 import frc.robot.commands.SetRpmShootCommandGroup;
 import frc.robot.commands.UnclogCommand;
 import frc.robot.commands.VisionCommandGroup;
 import frc.robot.commands.WinchCommand;
+import frc.robot.modules.CustomSendableChooser;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.NetworkTables;
 import frc.robot.subsystems.PidShooter;
 import frc.robot.subsystems.Winch;
 import frc.robot.triggers.AnalogTrigger;
 import frc.robot.triggers.TriggerButton;
+import java.util.function.DoubleSupplier;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -63,6 +72,7 @@ public class RobotContainer {
   private PidShooter pidShooter;
   private Elevator elevator;
   private Winch winch;
+  private NetworkTables networkTables;
 
   private AutoStraightCommandGroup autoStraightCommandGroup;
   private AutoRightShootCommandGroup autoRightShootCommandGroup;
@@ -80,6 +90,12 @@ public class RobotContainer {
   private PidShootCommandGroup highShootCommand;
   private UnclogCommand unclogCommand;
   private WinchCommand winchCommand;
+
+  private AutoCustomCommand autoCustomCommand;
+  private CustomDriveDistanceCommand driveCommand;
+  private CustomDriveTurnCommand turnCommand;
+  private CustomDriveDistanceCommand intakeDriveCommand;
+  private CustomShootCommand shootCommand;
 
   XboxController driverController;
   JoystickButton driverButtonA;
@@ -104,6 +120,14 @@ public class RobotContainer {
   AnalogTrigger analogTrigger;
 
   SendableChooser<Command> autoChooser;
+  SendableChooser<Command> customChooser;
+  
+  CustomSendableChooser command1;
+  CustomSendableChooser command2;
+  CustomSendableChooser command3;
+  CustomSendableChooser command4;
+  CustomSendableChooser command5;
+  CustomSendableChooser command6;
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -115,7 +139,26 @@ public class RobotContainer {
     pidShooter = new PidShooter();
     elevator = new Elevator(); 
     winch = new Winch();
+    networkTables = new NetworkTables();
     
+    driveCommand = new CustomDriveDistanceCommand(false, driveTrain, intake, networkTables);
+    turnCommand = new CustomDriveTurnCommand(driveTrain, networkTables);
+    intakeDriveCommand = new CustomDriveDistanceCommand(true, driveTrain, intake, networkTables);
+    shootCommand = new CustomShootCommand(pidShooter, networkTables);
+
+    command1 = new CustomSendableChooser(driveCommand, turnCommand, 
+      shootCommand, intakeDriveCommand);
+    command2 = new CustomSendableChooser(driveCommand, turnCommand, 
+      shootCommand, intakeDriveCommand);
+    command3 = new CustomSendableChooser(driveCommand, turnCommand, 
+      shootCommand, intakeDriveCommand);
+    command4 = new CustomSendableChooser(driveCommand, turnCommand, 
+      shootCommand, intakeDriveCommand);
+    command5 = new CustomSendableChooser(driveCommand, turnCommand, 
+      shootCommand, intakeDriveCommand);
+    command6 = new CustomSendableChooser(driveCommand, turnCommand, 
+      shootCommand, intakeDriveCommand);
+
     // Initialize Driver Controller and Buttons
     driverController = new XboxController(0);
 
@@ -167,6 +210,9 @@ public class RobotContainer {
     unclogCommand = new UnclogCommand(intake);
     winchCommand = new WinchCommand(winch, driveTrain);
     
+    autoCustomCommand = new AutoCustomCommand(command1, command2, command3, 
+      command4, command5, command6, networkTables);
+
     // Set the default drive command to split-stick arcade drive
     driveTrain.setDefaultCommand(new DefaultDriveCommand(
         () -> driverController.getY(Hand.kLeft),
@@ -225,6 +271,7 @@ public class RobotContainer {
     autoChooser.addOption("Auto Middle Dump", autoMidDumpCommand);
     autoChooser.addOption("Auto Left Shoot", autoLeftShootCommandGroup);
     autoChooser.addOption("Auto Left Dump", autoLeftDumpCommandGroup);
+    autoChooser.addOption("Outreach Auto", autoCustomCommand);
     Shuffleboard.getTab("Driver Tab")
       .add("Auto Chooser", autoChooser)
       .withWidget(BuiltInWidgets.kComboBoxChooser);

@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.Shoot;
 import frc.robot.modules.TrajectoryMath;
 import frc.robot.subsystems.DriveTrain;
 
@@ -67,10 +68,11 @@ public class BasicVisionCommand extends CommandBase {
       finished = true;
     }
     SmartDashboard.putNumber("RPM Requested", TrajectoryMath.getVelocityFromDistance(
-        TrajectoryMath.getDistanceFromPitch(driveTrain.getShootVisionPitch())));
+        TrajectoryMath.getDistanceFromPitch(driveTrain.getShootVisionPitch(), Shoot.GOAL_HEIGHT), 
+        Shoot.GOAL_HEIGHT));
     SmartDashboard.putNumber("Rotation Adjust", driveTrain.getShootVisionYaw());
     SmartDashboard.putNumber("Distance From", TrajectoryMath.getDistanceFromPitch(
-        driveTrain.getShootVisionPitch()));
+        driveTrain.getShootVisionPitch(), Shoot.GOAL_HEIGHT));
     //SmartDashboard.putNumber("Velocity",TrajectoryMath.getVelocityFromDistance(25));
   }
 

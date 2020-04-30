@@ -8,49 +8,38 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.modules.TrajectoryMath;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.NetworkTables;
 import frc.robot.subsystems.PidShooter;
 
-public class ShootCommand extends CommandBase {
-  private DriveTrain drive;
-  private PidShooter shooter;
-  
+public class CustomShootCommand extends CommandBase {
+  PidShooter pidShooter;
+  NetworkTables networkTables;
+
   /**
-   * Spins the shoot motors to the speed needed by the vision target.
-   * 
-   * @param shooter the shooter subsystem used
-   * @param drive the drivetrain
+   * Creates a new CustomShootCommand.
    */
-  public ShootCommand(PidShooter shooter, DriveTrain drive) {
+  public CustomShootCommand(PidShooter pidShooter, NetworkTables networkTables) {
     // Use addRequirements() here to declare subsystem dependencies.
-
-    this.shooter = shooter;
-    this.drive = drive;
-    this.addRequirements(shooter);
-
+    this.pidShooter = pidShooter;
+    this.networkTables = networkTables;
+    addRequirements(pidShooter, networkTables);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //shooter.setSetpoint(5000);
-    shooter.setSetpoint(TrajectoryMath.getVelocityFromDistance(
-        TrajectoryMath.getDistanceFromPitch(drive.getShootVisionPitch(), 
-        shooter.goalHeight()), shooter.goalHeight()));
+    pidShooter.shootPower(networkTables.getValue() / 200);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    shooter.shootRpm();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.stopShooting();
+    pidShooter.shootPower(0);
   }
 
   // Returns true when the command should end.

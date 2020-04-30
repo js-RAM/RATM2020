@@ -10,10 +10,12 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Shoot;
@@ -32,6 +34,8 @@ public class PidShooter extends SubsystemBase {
   private double setpoint;
   private double tolerance = 50;
 
+  private ShuffleboardTab visionTab;
+  private NetworkTableEntry goalHeight;
 
   /**
    * The shooter PID subsystem contains the necessary motors and sensors needed
@@ -65,6 +69,9 @@ public class PidShooter extends SubsystemBase {
     rightPidController.setTolerance(tolerance);
     leftPidController.setSetpoint(setpoint);
     rightPidController.setSetpoint(setpoint);
+
+    visionTab = Shuffleboard.getTab("Vision Tab");
+    goalHeight = visionTab.add("Height of Goal", Shoot.GOAL_HEIGHT).getEntry();
   }
 
   @Override
@@ -174,5 +181,9 @@ public class PidShooter extends SubsystemBase {
    */
   public double getRightSpeed() {
     return shootRightEncoder.getRate() * Math.PI * 1.3333333333333333333333333333333333333333333333;
+  }
+
+  public double goalHeight() {
+    return goalHeight.getDouble(Shoot.GOAL_HEIGHT);
   }
 }

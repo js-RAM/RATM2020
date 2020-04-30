@@ -76,6 +76,7 @@ public final class Constants {
     public static double I_RIGHT_SHOOTER = 0.00007;
     public static double D_RIGHT_SHOOTER = 0;
     public static double SHOOT_TOLERANCE = 50;
+    public static final double GOAL_HEIGHT = 8.16;
   }
 
   public static final class Climb {
